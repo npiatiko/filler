@@ -133,5 +133,6 @@ int				ft_nbrlen(int num);
 void			resetspecifier(t_specifier *spec);
 char			*ft_print_double(t_specifier *spec, long double nbr);
 char			*ft_print_bin(t_specifier *spec, long long int data);
+int				ft_pow(int nbr, unsigned int pow);
 
 #endif

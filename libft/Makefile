@@ -24,7 +24,7 @@ ft_putnbr_fd.c ft_lstnew.c ft_lstdelone.c ft_lstdel.c ft_lstadd.c ft_lstiter.c f
 ft_list_push_back.c ft_print_bits.c ft_list_size.c ft_print_list.c ft_list_reverse.c get_next_line.c \
 ft_fprinto.c ft_fprintx.c ft_init_specifier.c ft_converter.c ft_printc.c ft_printf.c \
 ft_printdi.c ft_printp.c ft_printfu.c ft_prints.c ft_aux_fns.c ft_printdouble.c \
-ft_print_bin.c
+ft_print_bin.c ft_pow.c
 
 OBJS = $(SRCS:.c=.o)
 
