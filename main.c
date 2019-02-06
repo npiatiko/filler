@@ -85,8 +85,6 @@ void ft_initgame(t_map *map)
 	}
 	free(line);
 	ft_initmap(map);
-//	ft_calc_distmap(map);
-
 }
 
 void ft_print_map(t_map *map, t_piece *piece)
@@ -118,6 +116,11 @@ void ft_print_map(t_map *map, t_piece *piece)
 	ft_putstr_fd("  ", fd);
 	ft_putnbr_fd(piece->y, fd);
 	ft_putendl_fd("", fd);
+	ft_putnbr_fd(piece->xcut, fd);
+	ft_putstr_fd("  ", fd);
+	ft_putnbr_fd(piece->ycut, fd);
+	ft_putendl_fd("", fd);
+
 
 	i = 0;
 	while (i < piece->x)
@@ -135,6 +138,32 @@ void ft_print_map(t_map *map, t_piece *piece)
 	close(fd);
 }
 
+void ft_cutpiece(t_piece *piece)
+{
+	int i;
+	int j;
+
+	piece->bestx = 0;
+	piece->besty = 0;
+	piece->sum = 2000000;
+	piece->xcut = 0;
+	piece->ycut = 0;
+	i = 0;
+	while (i < piece->x)
+	{
+		j = 0;
+		while (j < piece->y)
+		{
+			if (piece->piece[i][j] == '*')
+			{
+				piece->xcut = i > piece->xcut ? i : piece->xcut;
+				piece->ycut = j > piece->ycut ? j : piece->ycut;
+			}
+			j++;
+		}
+		i++;
+	}
+}
 void ft_get_piece(t_piece *piece)
 {
 	char *line;
@@ -155,19 +184,18 @@ void ft_get_piece(t_piece *piece)
 		piece->piece[i] = line;
 		i++;
 	}
+	ft_cutpiece(piece);
 }
 
-int ft_check_pos(int istart, int jstart, t_map *map, t_piece *piece)
+void ft_check_pos(int istart, int jstart, t_map *map, t_piece *piece)
 {
-//	int imax;
-//	int jmax;
 	int i;
 	int j;
 	int count;
+	int sum;
 
+	sum = 0;
 	count = 0;
-//	imax = istart + piece->x;
-//	jmax = jstart + piece->y;
 	i = 0;
 	while(i < piece->x)
 	{
@@ -175,57 +203,72 @@ int ft_check_pos(int istart, int jstart, t_map *map, t_piece *piece)
 		while (j < piece->y)
 		{
 			if (piece->piece[i][j] == '*' && map->distmap[i + istart][j + jstart] == -10)
-				return 0;
+				return ;
 			if (piece->piece[i][j] == '*' && map->distmap[i + istart][j + jstart] == -20)
 				count++;
+			if (count > 1)
+				return ;
+			if (piece->piece[i][j] == '*' && map->distmap[i + istart][j + jstart] > 0)
+			{
+				sum += map->distmap[i + istart][j + jstart];
+			}
 			j++;
 		}
 		i++;
 	}
-	return count == 1 ? 1 : 0;
+	if (count == 1 && sum < piece->sum)
+	{
+		piece->sum = sum ;
+		piece->bestx = istart;
+		piece->besty = jstart;
+	}
 }
-
-void ft_insert_piece(t_map *map, t_piece *piece)
+void ft_del_piece(t_piece *piece)
+{
+	while (piece->x--)
+		free(piece->piece[piece->x]);
+	free(piece->piece);
+}
+int ft_insert_piece(t_map *map, t_piece *piece)
 {
 	int i = 0;
 	int j;
 //	int  fd;
 
-	while(i < map->x - piece->x)
+	while(i < map->x - piece->xcut)
 	{
 		j = 0;
-		while (j < map->y - piece->y)
+		while (j < map->y - piece->ycut)
 		{
-			if (ft_check_pos(i, j, map, piece))
-			{
+			ft_check_pos(i, j, map, piece);
 //				fd = open("test", O_RDWR | O_TRUNC);
 //				ft_putnbr_fd(i, fd);
 //				ft_putstr_fd("  ", fd);
 //				ft_putnbr_fd(j, fd);
 //				ft_putendl_fd("", fd);
 //				close(fd);
-				ft_printf("%d %d\n", i, j);
-				return;
-			}
 			j++;
 		}
 		i++;
 	}
-	ft_printf("%d %d\n", 0, 0);
+	ft_printf("%d %d\n", piece->bestx, piece->besty);
+	ft_del_piece(piece);
+	return (piece->sum == 2000000 ? 1 : 0);
 }
 int main(void)
 {
 	t_map map;
 	t_piece piece;
 
-//	ft_putnbr_fd(123, fd);
 	ft_initgame(&map);
 	while (1)
 	{
 		ft_calc_distmap(&map);
 		ft_get_piece(&piece);
-		ft_insert_piece(&map, &piece);
+//		ft_print_map(&map, &piece);
+		if (ft_insert_piece(&map, &piece))
+			break;
 	}
-//	ft_print_map(&map, &piece);
+	system("leaks -q npiatiko.filler > leaks");
 	return (0);
 }

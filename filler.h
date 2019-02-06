@@ -16,6 +16,11 @@ typedef struct		s_piece
 {
 	int		x;
 	int		y;
+	int 	xcut;
+	int 	ycut;
+	int 	bestx;
+	int		besty;
+	int 	sum;
 	char	**piece;
 
 }					t_piece;
