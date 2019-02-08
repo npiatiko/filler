@@ -116,6 +116,6 @@ int		main(void)
 		if (ft_insert_piece(&map, &piece))
 			break ;
 	}
-	system("leaks -q npiatiko.filler > leaks");
+//	system("leaks -q npiatiko.filler > leaks");
 	return (0);
 }
