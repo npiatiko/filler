@@ -13,25 +13,23 @@
 NAME = npiatiko.filler
 FLAGS = -Wall -Wextra -Werror
 CC = gcc
-SRCS = search_place.c \
-       piece.c \
+SRCS = calc_distmap.c \
        main.c \
-       calc_distmap.c
+       piece.c \
+       search_place.c
 
 OBJS = $(SRCS:.c=.o)
 
-all: $(NAME)
+all: lib $(NAME)
 
-$(NAME): $(LIBFT) $(OBJS)
-	make -C libft/
-	$(CC) $(FLAGS) -c $(SRCS)
+$(NAME): $(OBJS) libft/libft.a
 	$(CC) $(OBJS) -o $(NAME) -L libft/ -lft
-
-$(LIBFT):
-	make -C libft/
 
 %.o: %.c
 	$(CC) $(FLAGS) -o $@ -c $<
+
+lib:
+	make -C libft/
 
 clean:
 	make -C libft/ clean

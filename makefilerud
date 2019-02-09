@@ -1,0 +1,56 @@
+# ************************************************************************ #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: olrudenk <marvin@42.fr>                    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2018/10/25 18:44:12 by olrudenk          #+#    #+#              #
+#    Updated: 2019/02/09 12:55:04 by olrudenk         ###   ########.fr        #
+#                                                                              #
+# ************************************************************************ #
+
+NAME = npiatiko.filler
+
+FLAGS = -Wall -Wextra -Werror
+
+LIBFT_DIR = ./libft
+LIBFT_OBJ = ./libft/*.o
+
+SRC = search_place.c \
+             piece.c \
+             main.c \
+             calc_distmap.c
+
+OBJ = $(SRC:.c=.o)
+
+all: $(NAME)
+
+$(NAME): $(LIBFT_OBJ) $(OBJ)
+ @echo "\033[33mCreating libftprintf.a...\033[0m"
+ ar rc $(NAME) $(OBJ) $(LIBFT_OBJ)
+ @echo "\033[32mlibftprintf.a has successfully created!\033[0m"
+ @echo "\033[35mPS: for ft_cprintf usage do like that [\033[0mft_cprintf(\"+usage\");\033[35m]\033[0m"
+
+%.o: %.c
+ gcc -c $(FLAGS) $< -o $@
+
+$(LIBFT_OBJ):
+%.o: %.c
+ @echo "\033[33mCreating object libft files...\033[0m"
+ make -C $(LIBFT_DIR)
+ @echo "\033[32mObject libft files have created!\033[0m"
+
+clean:
+ @echo "\033[33mDeleting all object files...\033[0m"
+ make clean -C ./libft
+ rm -f *.o
+ @echo "\033[32mAll object files have deleted!\033[0m"
+
+fclean: clean
+ @echo "\033[33mDeleting libft.a and libfprintf.a ...\033[0m"
+ make fclean -C ./libft
+ rm -f $(NAME)
+ @echo "\033[32mLibft.a and libftprintf.a have deleted!\033[0m"
+
+re: fclean all
